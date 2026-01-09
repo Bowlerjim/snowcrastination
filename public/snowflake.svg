@@ -1,0 +1,40 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+    <!-- Main snowflake -->
+    <g transform="translate(32,32)" filter="url(#glow)">
+      <!-- Center -->
+      <circle cx="0" cy="0" r="2" fill="#E0F7FF" stroke="#87CEEB" stroke-width="0.5"/>
+      <!-- 6 main arms -->
+      <g stroke="#87CEEB" stroke-width="1" fill="none" stroke-linecap="round">
+        <line x1="0" y1="0" x2="0" y2="-20"/>
+        <line x1="0" y1="0" x2="17.3" y2="-10"/>
+        <line x1="0" y1="0" x2="17.3" y2="10"/>
+        <line x1="0" y1="0" x2="0" y2="20"/>
+        <line x1="0" y1="0" x2="-17.3" y2="10"/>
+        <line x1="0" y1="0" x2="-17.3" y2="-10"/>
+      </g>
+      <!-- Secondary branches -->
+      <g stroke="#B0E0E6" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.8">
+        <line x1="0" y1="-20" x2="-6" y2="-28"/>
+        <line x1="0" y1="-20" x2="6" y2="-28"/>
+        <line x1="17.3" y1="-10" x2="23.3" y2="-18"/>
+        <line x1="17.3" y1="-10" x2="23.3" y2="-2"/>
+        <line x1="17.3" y1="10" x2="23.3" y2="2"/>
+        <line x1="17.3" y1="10" x2="23.3" y2="18"/>
+        <line x1="0" y1="20" x2="-6" y2="28"/>
+        <line x1="0" y1="20" x2="6" y2="28"/>
+        <line x1="-17.3" y1="10" x2="-23.3" y2="18"/>
+        <line x1="-17.3" y1="10" x2="-23.3" y2="2"/>
+        <line x1="-17.3" y1="-10" x2="-23.3" y2="-2"/>
+        <line x1="-17.3" y1="-10" x2="-23.3" y2="-18"/>
+      </g>
+    </g>
+  </svg>

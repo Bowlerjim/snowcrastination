@@ -10,6 +10,7 @@ export interface GameGraphics {
 /**
  * Load and preload game graphics
  * By default, looks for images in /public folder
+ * Tries PNG first (for AI-generated images), falls back to SVG
  */
 export async function loadGameGraphics(
   customPaths?: GameGraphics
@@ -18,6 +19,14 @@ export async function loadGameGraphics(
     cabin: customPaths?.cabin || '/cabin.png',
     snowflake: customPaths?.snowflake || '/snowflake.png',
     snowball: customPaths?.snowball || '/snowball.png'
+  }
+
+  // If PNG files don't exist, try SVG alternatives
+  if (typeof window !== 'undefined') {
+    const availability = await checkGraphicsAvailability()
+    if (availability.cabin) graphics.cabin = availability.cabin
+    if (availability.snowflake) graphics.snowflake = availability.snowflake
+    if (availability.snowball) graphics.snowball = availability.snowball
   }
 
   // Preload images
@@ -42,24 +51,31 @@ export async function loadGameGraphics(
 
 /**
  * Check if graphics are available in public folder
+ * Tries PNG first (AI-generated), falls back to SVG
  */
 export async function checkGraphicsAvailability(): Promise<GameGraphics> {
   const graphics: GameGraphics = {}
 
   if (typeof window === 'undefined') return graphics
 
-  const paths = ['/cabin.png', '/snowflake.png', '/snowball.png']
+  // Define the priority order: PNG first, then SVG
+  const imagesByType = {
+    cabin: ['/cabin.png', '/cabin.svg'],
+    snowflake: ['/snowflake.png', '/snowflake.svg'],
+    snowball: ['/snowball.png', '/snowball.svg']
+  }
 
-  for (const path of paths) {
-    try {
-      const response = await fetch(path, { method: 'HEAD' })
-      if (response.ok) {
-        if (path.includes('cabin')) graphics.cabin = path
-        if (path.includes('snowflake')) graphics.snowflake = path
-        if (path.includes('snowball')) graphics.snowball = path
+  for (const [type, paths] of Object.entries(imagesByType)) {
+    for (const path of paths) {
+      try {
+        const response = await fetch(path, { method: 'HEAD' })
+        if (response.ok) {
+          graphics[type as keyof GameGraphics] = path
+          break // Use first available format (PNG preferred)
+        }
+      } catch {
+        // File doesn't exist or CORS issue, try next format
       }
-    } catch {
-      // File doesn't exist or CORS issue
     }
   }
 

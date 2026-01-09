@@ -1,0 +1,17 @@
+<svg width="60" height="70" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg">
+    <!-- Cabin body -->
+    <rect x="10" y="25" width="40" height="35" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+    <!-- Roof -->
+    <polygon points="5,25 30,5 55,25" fill="#A0361A" stroke="#8B2E1B" stroke-width="1"/>
+    <!-- Door -->
+    <rect x="25" y="45" width="10" height="15" fill="#4A2C1F" stroke="#2F1B14" stroke-width="0.5"/>
+    <!-- Left window -->
+    <rect x="15" y="35" width="8" height="8" fill="#FFD700" stroke="#FFA500" stroke-width="0.5" opacity="0.8"/>
+    <!-- Right window -->
+    <rect x="37" y="35" width="8" height="8" fill="#FFD700" stroke="#FFA500" stroke-width="0.5" opacity="0.8"/>
+    <!-- Chimney -->
+    <rect x="42" y="10" width="6" height="18" fill="#666" stroke="#444" stroke-width="0.5"/>
+    <!-- Smoke -->
+    <circle cx="45" cy="8" r="3" fill="#BBB" opacity="0.4"/>
+    <circle cx="46" cy="4" r="2.5" fill="#DDD" opacity="0.3"/>
+  </svg>
