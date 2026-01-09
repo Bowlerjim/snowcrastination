@@ -30,30 +30,30 @@ export default function Leaderboard() {
   }, [])
 
   if (loading) {
-    return <div className="text-gray-400 text-center py-4">Loading leaderboard...</div>
+    return <div className="text-gray-400 text-center py-3 text-sm md:text-base">Loading leaderboard...</div>
   }
 
   if (error) {
-    return <div className="text-red-400 text-center py-4">{error}</div>
+    return <div className="text-red-400 text-center py-3 text-sm md:text-base">{error}</div>
   }
 
   if (scores.length === 0) {
-    return <div className="text-gray-400 text-center py-4">No scores yet. Be the first!</div>
+    return <div className="text-gray-400 text-center py-3 text-sm md:text-base">No scores yet. Be the first!</div>
   }
 
   return (
-    <div className="bg-slate-700 bg-opacity-50 rounded-lg p-4 border border-slate-600">
-      <div className="space-y-2">
+    <div className="bg-slate-700 bg-opacity-50 rounded-lg p-3 md:p-4 border border-slate-600">
+      <div className="space-y-1 md:space-y-2">
         {scores.slice(0, 10).map((entry, idx) => (
           <div
             key={idx}
-            className="flex justify-between items-center p-2 rounded hover:bg-slate-600 hover:bg-opacity-30 transition"
+            className="flex justify-between items-center p-2 rounded hover:bg-slate-600 hover:bg-opacity-30 transition text-xs md:text-sm"
           >
-            <div className="flex items-center gap-3">
-              <div className="text-lg font-bold text-gray-400 w-6">{idx + 1}</div>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="text-base md:text-lg font-bold text-gray-400 w-5 md:w-6 flex-shrink-0">{idx + 1}</div>
               <div className="text-white font-semibold truncate">{entry.name}</div>
             </div>
-            <div className="text-lg font-bold text-orange-400">{entry.score}</div>
+            <div className="text-base md:text-lg font-bold text-orange-400 ml-2 flex-shrink-0">{entry.score}</div>
           </div>
         ))}
       </div>

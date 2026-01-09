@@ -111,6 +111,9 @@ export class GameEngine {
       }
     }
 
+    // Update cabin
+    this.cabin.update(this.getSnowPilePercent())
+
     // Check lose condition
     if (this.snowPileHeight >= this.maxSnowPileHeight) {
       this.isGameOver = true
@@ -183,5 +186,13 @@ export class GameEngine {
 
   getSnowPilePercent(): number {
     return Math.min(this.snowPileHeight / this.maxSnowPileHeight, 1)
+  }
+
+  toggleAudio(): void {
+    this.audioManager.toggleMute()
+  }
+
+  isMuted(): boolean {
+    return this.audioManager.isMutedState()
   }
 }

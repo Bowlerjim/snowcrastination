@@ -15,6 +15,7 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
   const [isGameOver, setIsGameOver] = useState(false)
   const [score, setScore] = useState(0)
   const [snowPilePercent, setSnowPilePercent] = useState(0)
+  const [isMuted, setIsMuted] = useState(false)
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -64,6 +65,13 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
     }
   }, [])
 
+  const handleMuteToggle = () => {
+    setIsMuted(!isMuted)
+    if (gameEngineRef.current) {
+      gameEngineRef.current.toggleAudio()
+    }
+  }
+
   if (isGameOver) {
     return <GameOverScreen score={score} onPlayAgain={() => {
       setIsGameOver(false)
@@ -78,7 +86,12 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
         className="block w-full h-full touch-none"
         onContextMenu={(e) => e.preventDefault()}
       />
-      <GameHUD score={score} snowPilePercent={snowPilePercent} />
+      <GameHUD
+        score={score}
+        snowPilePercent={snowPilePercent}
+        isMuted={isMuted}
+        onMuteToggle={handleMuteToggle}
+      />
     </div>
   )
 }

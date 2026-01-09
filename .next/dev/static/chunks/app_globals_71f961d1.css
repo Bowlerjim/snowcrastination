@@ -58,12 +58,20 @@
   display: block;
 }
 
+.contents {
+  display: contents;
+}
+
 .flex {
   display: flex;
 }
 
 .inline-block {
   display: inline-block;
+}
+
+.table {
+  display: table;
 }
 
 .h-full {
@@ -80,6 +88,10 @@
 
 .w-screen {
   width: 100vw;
+}
+
+.flex-1 {
+  flex: 1;
 }
 
 .grow {
@@ -146,6 +158,11 @@
   border-width: 2px;
 }
 
+.border-t {
+  border-top-style: var(--tw-border-style);
+  border-top-width: 1px;
+}
+
 .bg-gradient-to-b {
   --tw-gradient-position: to bottom in oklab;
   background-image: linear-gradient(var(--tw-gradient-stops));
@@ -208,6 +225,13 @@
 .focus\:outline-none:focus {
   --tw-outline-style: none;
   outline-style: none;
+}
+
+.active\:scale-95:active {
+  --tw-scale-x: 95%;
+  --tw-scale-y: 95%;
+  --tw-scale-z: 95%;
+  scale: var(--tw-scale-x) var(--tw-scale-y);
 }
 
 .disabled\:cursor-not-allowed:disabled {

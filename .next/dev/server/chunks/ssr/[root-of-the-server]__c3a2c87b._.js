@@ -458,6 +458,8 @@ class GameEngine {
                 }
             }
         }
+        // Update cabin
+        this.cabin.update(this.getSnowPilePercent());
         // Check lose condition
         if (this.snowPileHeight >= this.maxSnowPileHeight) {
             this.isGameOver = true;
@@ -512,6 +514,12 @@ class GameEngine {
     getSnowPilePercent() {
         return Math.min(this.snowPileHeight / this.maxSnowPileHeight, 1);
     }
+    toggleAudio() {
+        this.audioManager.toggleMute();
+    }
+    isMuted() {
+        return this.audioManager.isMutedState();
+    }
 }
 }),
 "[project]/components/GameHUD.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -522,16 +530,9 @@ __turbopack_context__.s([
     ()=>GameHUD
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 'use client';
 ;
-;
-function GameHUD({ score, snowPilePercent }) {
-    const [isMuted, setIsMuted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const handleMuteToggle = ()=>{
-        setIsMuted(!isMuted);
-    // TODO: Call audio manager to toggle mute
-    };
+function GameHUD({ score, snowPilePercent, isMuted, onMuteToggle }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "absolute top-0 left-0 right-0 z-10 p-4 flex justify-between items-start text-white pointer-events-none",
         children: [
@@ -543,7 +544,7 @@ function GameHUD({ score, snowPilePercent }) {
                         children: "SCORE"
                     }, void 0, false, {
                         fileName: "[project]/components/GameHUD.tsx",
-                        lineNumber: 22,
+                        lineNumber: 16,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -551,23 +552,23 @@ function GameHUD({ score, snowPilePercent }) {
                         children: Math.floor(score)
                     }, void 0, false, {
                         fileName: "[project]/components/GameHUD.tsx",
-                        lineNumber: 23,
+                        lineNumber: 17,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/GameHUD.tsx",
-                lineNumber: 21,
+                lineNumber: 15,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                onClick: handleMuteToggle,
+                onClick: onMuteToggle,
                 className: "bg-black bg-opacity-50 rounded-lg p-4 pointer-events-auto hover:bg-opacity-70 transition",
                 title: isMuted ? 'Unmute' : 'Mute',
                 children: isMuted ? '🔇' : '🔊'
             }, void 0, false, {
                 fileName: "[project]/components/GameHUD.tsx",
-                lineNumber: 27,
+                lineNumber: 21,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -578,7 +579,7 @@ function GameHUD({ score, snowPilePercent }) {
                         children: "SNOW LEVEL"
                     }, void 0, false, {
                         fileName: "[project]/components/GameHUD.tsx",
-                        lineNumber: 37,
+                        lineNumber: 31,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -590,12 +591,12 @@ function GameHUD({ score, snowPilePercent }) {
                             }
                         }, void 0, false, {
                             fileName: "[project]/components/GameHUD.tsx",
-                            lineNumber: 39,
+                            lineNumber: 33,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/GameHUD.tsx",
-                        lineNumber: 38,
+                        lineNumber: 32,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -606,19 +607,19 @@ function GameHUD({ score, snowPilePercent }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/GameHUD.tsx",
-                        lineNumber: 44,
+                        lineNumber: 38,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/GameHUD.tsx",
-                lineNumber: 36,
+                lineNumber: 30,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/GameHUD.tsx",
-        lineNumber: 19,
+        lineNumber: 13,
         columnNumber: 5
     }, this);
 }
@@ -865,6 +866,7 @@ function GameCanvas({ onGameOver }) {
     const [isGameOver, setIsGameOver] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [score, setScore] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [snowPilePercent, setSnowPilePercent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
+    const [isMuted, setIsMuted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
@@ -901,6 +903,12 @@ function GameCanvas({ onGameOver }) {
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
+    const handleMuteToggle = ()=>{
+        setIsMuted(!isMuted);
+        if (gameEngineRef.current) {
+            gameEngineRef.current.toggleAudio();
+        }
+    };
     if (isGameOver) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$GameOver$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
             score: score,
@@ -910,7 +918,7 @@ function GameCanvas({ onGameOver }) {
             }
         }, void 0, false, {
             fileName: "[project]/components/GameCanvas.tsx",
-            lineNumber: 68,
+            lineNumber: 76,
             columnNumber: 12
         }, this);
     }
@@ -923,21 +931,23 @@ function GameCanvas({ onGameOver }) {
                 onContextMenu: (e)=>e.preventDefault()
             }, void 0, false, {
                 fileName: "[project]/components/GameCanvas.tsx",
-                lineNumber: 76,
+                lineNumber: 84,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$GameHUD$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                 score: score,
-                snowPilePercent: snowPilePercent
+                snowPilePercent: snowPilePercent,
+                isMuted: isMuted,
+                onMuteToggle: handleMuteToggle
             }, void 0, false, {
                 fileName: "[project]/components/GameCanvas.tsx",
-                lineNumber: 81,
+                lineNumber: 89,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/GameCanvas.tsx",
-        lineNumber: 75,
+        lineNumber: 83,
         columnNumber: 5
     }, this);
 }
@@ -1097,41 +1107,88 @@ function MainMenu({ onStart }) {
         fetchWeather();
     }, []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "flex flex-col items-center justify-center w-full h-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 p-4",
+        className: "flex flex-col items-center justify-between w-full h-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 p-4 md:p-8 overflow-y-auto",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "text-center mb-8",
+                className: "flex-1 flex flex-col items-center justify-center w-full",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                        className: "text-5xl md:text-6xl font-bold mb-2 text-white drop-shadow-lg",
-                        children: "Snowcrastination"
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "text-center mb-6 md:mb-8",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                className: "text-4xl md:text-6xl font-bold mb-2 text-white drop-shadow-lg",
+                                children: "Snowcrastination"
+                            }, void 0, false, {
+                                fileName: "[project]/components/MainMenu.tsx",
+                                lineNumber: 44,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                className: "text-base md:text-xl text-blue-100 mb-4",
+                                children: "Defend your cabin from the falling snow"
+                            }, void 0, false, {
+                                fileName: "[project]/components/MainMenu.tsx",
+                                lineNumber: 47,
+                                columnNumber: 11
+                            }, this),
+                            loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-blue-200 text-sm",
+                                children: "Loading weather..."
+                            }, void 0, false, {
+                                fileName: "[project]/components/MainMenu.tsx",
+                                lineNumber: 52,
+                                columnNumber: 13
+                            }, this) : weatherMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "bg-blue-800 bg-opacity-50 rounded-lg p-3 md:p-4 mb-6 border-2 border-blue-400",
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-lg md:text-xl text-white",
+                                    children: weatherMessage
+                                }, void 0, false, {
+                                    fileName: "[project]/components/MainMenu.tsx",
+                                    lineNumber: 55,
+                                    columnNumber: 15
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "[project]/components/MainMenu.tsx",
+                                lineNumber: 54,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/components/MainMenu.tsx",
                         lineNumber: 43,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-lg md:text-xl text-blue-100 mb-4",
-                        children: "Defend your cabin from the falling snow"
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        onClick: onStart,
+                        className: "px-6 md:px-8 py-3 md:py-4 mb-6 md:mb-8 text-xl md:text-2xl font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 rounded-lg shadow-lg transform hover:scale-105 transition-transform active:scale-95",
+                        children: "Start Game"
                     }, void 0, false, {
                         fileName: "[project]/components/MainMenu.tsx",
-                        lineNumber: 46,
+                        lineNumber: 60,
                         columnNumber: 9
                     }, this),
-                    weatherMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "bg-blue-800 bg-opacity-50 rounded-lg p-4 mb-6 border-2 border-blue-400",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-xl text-white",
-                            children: weatherMessage
-                        }, void 0, false, {
-                            fileName: "[project]/components/MainMenu.tsx",
-                            lineNumber: 52,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "w-full max-w-md mb-6 md:mb-8",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                className: "text-xl md:text-2xl font-bold text-white mb-3 md:mb-4 text-center",
+                                children: "🏆 Top Players"
+                            }, void 0, false, {
+                                fileName: "[project]/components/MainMenu.tsx",
+                                lineNumber: 68,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Leaderboard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
+                                fileName: "[project]/components/MainMenu.tsx",
+                                lineNumber: 69,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/components/MainMenu.tsx",
-                        lineNumber: 51,
-                        columnNumber: 11
+                        lineNumber: 67,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
@@ -1139,53 +1196,22 @@ function MainMenu({ onStart }) {
                 lineNumber: 42,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                onClick: onStart,
-                className: "px-8 py-4 mb-8 text-2xl font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 rounded-lg shadow-lg transform hover:scale-105 transition-transform",
-                children: "Start Game"
-            }, void 0, false, {
-                fileName: "[project]/components/MainMenu.tsx",
-                lineNumber: 57,
-                columnNumber: 7
-            }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-full max-w-md mb-8",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "text-2xl font-bold text-white mb-4 text-center",
-                        children: "🏆 Top Players"
-                    }, void 0, false, {
-                        fileName: "[project]/components/MainMenu.tsx",
-                        lineNumber: 65,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Leaderboard$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
-                        fileName: "[project]/components/MainMenu.tsx",
-                        lineNumber: 66,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/MainMenu.tsx",
-                lineNumber: 64,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mt-auto pt-8",
+                className: "w-full text-center pt-4 md:pt-8 border-t border-slate-700",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                     href: "https://buymeacoffee.com",
                     target: "_blank",
                     rel: "noopener noreferrer",
-                    className: "inline-block px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg shadow-md transform hover:scale-105 transition-transform",
+                    className: "inline-block px-6 py-2 md:py-3 text-base md:text-lg font-semibold text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-lg shadow-md transform hover:scale-105 transition-transform active:scale-95",
                     children: "☕ Buy Me a Hot Chocolate"
                 }, void 0, false, {
                     fileName: "[project]/components/MainMenu.tsx",
-                    lineNumber: 70,
+                    lineNumber: 74,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/MainMenu.tsx",
-                lineNumber: 69,
+                lineNumber: 73,
                 columnNumber: 7
             }, this)
         ]
@@ -1214,24 +1240,45 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$MainMenu$2e$ts
 ;
 function Home() {
     const [gameStarted, setGameStarted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        // Prevent scrolling and zoom on mobile
+        const preventZoom = (e)=>{
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        };
+        const preventDefault = (e)=>{
+            e.preventDefault();
+        };
+        document.addEventListener('touchmove', preventZoom, {
+            passive: false
+        });
+        document.addEventListener('wheel', preventDefault, {
+            passive: false
+        });
+        return ()=>{
+            document.removeEventListener('touchmove', preventZoom);
+            document.removeEventListener('wheel', preventDefault);
+        };
+    }, []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "w-screen h-screen bg-slate-900 overflow-hidden",
         children: !gameStarted ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$MainMenu$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
             onStart: ()=>setGameStarted(true)
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 13,
+            lineNumber: 34,
             columnNumber: 9
         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$GameCanvas$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
             onGameOver: ()=>setGameStarted(false)
         }, void 0, false, {
             fileName: "[project]/app/page.tsx",
-            lineNumber: 15,
+            lineNumber: 36,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 11,
+        lineNumber: 32,
         columnNumber: 5
     }, this);
 }

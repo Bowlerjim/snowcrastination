@@ -1,19 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-
 interface GameHUDProps {
   score: number
   snowPilePercent: number
+  isMuted: boolean
+  onMuteToggle: () => void
 }
 
-export default function GameHUD({ score, snowPilePercent }: GameHUDProps) {
-  const [isMuted, setIsMuted] = useState(false)
-
-  const handleMuteToggle = () => {
-    setIsMuted(!isMuted)
-    // TODO: Call audio manager to toggle mute
-  }
+export default function GameHUD({ score, snowPilePercent, isMuted, onMuteToggle }: GameHUDProps) {
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 p-4 flex justify-between items-start text-white pointer-events-none">
@@ -25,7 +19,7 @@ export default function GameHUD({ score, snowPilePercent }: GameHUDProps) {
 
       {/* Mute Button */}
       <button
-        onClick={handleMuteToggle}
+        onClick={onMuteToggle}
         className="bg-black bg-opacity-50 rounded-lg p-4 pointer-events-auto hover:bg-opacity-70 transition"
         title={isMuted ? 'Unmute' : 'Mute'}
       >

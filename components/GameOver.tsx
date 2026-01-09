@@ -41,8 +41,8 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full bg-gradient-to-b from-slate-900 to-slate-800 p-4">
-      <div className="bg-slate-800 bg-opacity-90 rounded-2xl p-8 max-w-md w-full text-center border-2 border-red-500">
+    <div className="flex items-center justify-center w-full h-full bg-gradient-to-b from-slate-900 to-slate-800 p-4 overflow-y-auto">
+      <div className="bg-slate-800 bg-opacity-90 rounded-2xl p-6 md:p-8 max-w-md w-full text-center border-2 border-red-500 my-auto">
         <h1 className="text-4xl font-bold text-white mb-6">Game Over</h1>
 
         <div className="bg-slate-700 rounded-lg p-6 mb-8">
@@ -52,7 +52,7 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
 
         {!submitted ? (
           <>
-            <p className="text-gray-300 mb-4">Great score! Make it to the leaderboard!</p>
+            <p className="text-gray-300 mb-4 text-sm md:text-base">Great score! Make it to the leaderboard!</p>
             <form onSubmit={handleSubmitScore} className="mb-6">
               <input
                 type="text"
@@ -60,13 +60,14 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
                 onChange={(e) => setPlayerName(e.target.value.substring(0, 10))}
                 placeholder="Your name (max 10 chars)"
                 maxLength={10}
-                className="w-full px-4 py-3 rounded-lg mb-4 text-black font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-3 rounded-lg mb-4 text-black font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm md:text-base"
                 disabled={isSubmitting}
+                autoFocus
               />
               <button
                 type="submit"
                 disabled={!playerName.trim() || isSubmitting}
-                className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-transform hover:scale-105"
+                className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-transform hover:scale-105 active:scale-95 text-sm md:text-base"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Score'}
               </button>
@@ -76,8 +77,8 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
           <div className="mb-8">
             <p className="text-green-400 font-bold mb-4">✓ Score submitted!</p>
             <div className="bg-slate-700 rounded-lg p-4 text-left max-h-48 overflow-y-auto">
-              <h3 className="font-bold text-white mb-3">Leaderboard</h3>
-              <ul className="space-y-2 text-sm">
+              <h3 className="font-bold text-white mb-3 text-sm md:text-base">Leaderboard</h3>
+              <ul className="space-y-2 text-xs md:text-sm">
                 {leaderboardScores.map((entry, idx) => (
                   <li key={idx} className="flex justify-between text-gray-300">
                     <span>{idx + 1}. {entry.name}</span>
@@ -91,7 +92,7 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
 
         <button
           onClick={onPlayAgain}
-          className="w-full px-6 py-3 text-lg font-bold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg transition-transform hover:scale-105"
+          className="w-full px-6 py-3 text-base md:text-lg font-bold text-white bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 rounded-lg transition-transform hover:scale-105 active:scale-95"
         >
           Play Again
         </button>
