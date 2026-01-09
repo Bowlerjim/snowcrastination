@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 * {
@@ -14,7 +15,7 @@ html, body {
 
 body {
   background: #0f172a;
-  color: #fff;
+  color: #e0f2fe;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -28,7 +29,115 @@ canvas {
   height: 100%;
 }
 
-/* Prevent zoom on iOS */
 input {
   font-size: 16px;
+}
+
+/* Cyberpunk Neon Effects */
+
+/* Cyan Glows */
+.neon-cyan {
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.3), 
+              0 0 20px rgba(6, 182, 212, 0.2), 
+              0 0 30px rgba(6, 182, 212, 0.1);
+}
+
+.neon-cyan-strong {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.5),
+              0 0 30px rgba(6, 182, 212, 0.3),
+              0 0 45px rgba(6, 182, 212, 0.2),
+              inset 0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+/* Gold Glows */
+.neon-gold {
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4),
+              0 0 20px rgba(245, 158, 11, 0.2),
+              0 0 30px rgba(245, 158, 11, 0.1);
+}
+
+.neon-gold-strong {
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.6),
+              0 0 30px rgba(251, 191, 36, 0.3),
+              0 0 45px rgba(245, 158, 11, 0.2);
+}
+
+/* Danger Glow */
+.neon-danger {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5),
+              0 0 30px rgba(239, 68, 68, 0.3),
+              0 0 45px rgba(239, 68, 68, 0.2);
+}
+
+/* Text Glows */
+.text-glow-cyan {
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.8),
+               0 0 20px rgba(6, 182, 212, 0.5),
+               0 0 30px rgba(6, 182, 212, 0.3);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.8),
+               0 0 20px rgba(245, 158, 11, 0.5);
+}
+
+.text-glow-danger {
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.8),
+               0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+/* Glass Morphism - Cyberpunk Edition */
+.glass-cyber {
+  background: linear-gradient(135deg, 
+              rgba(10, 22, 40, 0.85) 0%, 
+              rgba(15, 23, 42, 0.9) 100%);
+  backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.glass-cyber-strong {
+  background: linear-gradient(135deg,
+              rgba(10, 22, 40, 0.95) 0%,
+              rgba(15, 23, 42, 0.98) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 2px solid rgba(6, 182, 212, 0.3);
+}
+
+/* Animations */
+@keyframes pulse-glow-cyan {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(34, 211, 238, 0.8);
+  }
+}
+
+@keyframes pulse-glow-gold {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.8);
+  }
+}
+
+.animate-pulse-glow-cyan {
+  animation: pulse-glow-cyan 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow-gold {
+  animation: pulse-glow-gold 2s ease-in-out infinite;
+}
+
+h1, h2, h3 { 
+  font-family: 'Playfair Display', serif; 
+}
+
+.mono-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }

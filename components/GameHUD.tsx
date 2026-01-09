@@ -1,5 +1,7 @@
 'use client'
 
+import { theme } from '@/lib/theme'
+
 interface GameHUDProps {
   score: number
   snowPilePercent: number
@@ -8,36 +10,53 @@ interface GameHUDProps {
 }
 
 export default function GameHUD({ score, snowPilePercent, isMuted, onMuteToggle }: GameHUDProps) {
+  // Determine snow level gradient based on danger
+  const getSnowGradient = () => {
+    if (snowPilePercent < 0.5) return theme.gradients.progressSafe
+    if (snowPilePercent < 0.75) return theme.gradients.progressWarning
+    return theme.gradients.progressDanger
+  }
+
+  // Determine glow color based on danger
+  const getSnowGlow = () => {
+    if (snowPilePercent > 0.75) return theme.effects.glowDanger
+    return theme.effects.glowCyan
+  }
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-10 p-4 md:p-6 flex justify-between items-start text-white pointer-events-none">
-      {/* Score Card */}
-      <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-2xl p-5 md:p-6 pointer-events-auto border-2 border-slate-600/50 shadow-2xl">
-        <div className="text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wider mb-1">Score</div>
-        <div className="text-5xl md:text-6xl font-black text-transparent bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text">
+    <div className="absolute top-0 left-0 right-0 z-10 p-4 md:p-8 flex justify-between items-start pointer-events-none" style={{ color: theme.colors.neutral.ice }}>
+      {/* Score Card - Left Side */}
+      <div className="glass-cyber rounded-3xl p-6 md:p-8 pointer-events-auto border-2" style={{ borderColor: theme.colors.cyan.glow, boxShadow: theme.effects.glowCyan }}>
+        <div className="mono-label text-cyan-300/70 mb-2">Score</div>
+        <div className="font-display text-5xl md:text-6xl font-black text-transparent bg-gradient-to-r from-cyan-400 via-cyan-300 to-amber-400 bg-clip-text" style={{ filter: 'drop-shadow(0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.5))' }}>
           {Math.floor(score)}
         </div>
       </div>
 
-      {/* Mute Button */}
+      {/* Mute Button - Right Side */}
       <button
         onClick={onMuteToggle}
-        className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-2xl p-4 md:p-5 pointer-events-auto hover:from-slate-800/90 hover:to-slate-700/90 transition-all duration-200 border-2 border-slate-600/50 shadow-2xl transform hover:scale-110 active:scale-95 text-2xl md:text-3xl"
+        className="glass-cyber rounded-3xl p-5 md:p-7 pointer-events-auto hover:neon-cyan-strong transition-all duration-200 text-3xl md:text-4xl border-2 transform hover:scale-110 active:scale-95"
+        style={{ borderColor: theme.colors.cyan.glow, boxShadow: theme.effects.glowCyan }}
         title={isMuted ? 'Unmute' : 'Mute'}
       >
         {isMuted ? '🔇' : '🔊'}
       </button>
 
-      {/* Snow Pile Indicator */}
-      <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-2xl p-5 md:p-6 pointer-events-auto border-2 border-slate-600/50 shadow-2xl max-w-xs">
-        <div className="text-xs md:text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Snow Level</div>
-        <div className="w-48 md:w-56 h-7 md:h-8 bg-gradient-to-r from-slate-700 to-slate-600 rounded-full overflow-hidden border-2 border-slate-500 shadow-inner">
+      {/* Snow Level Indicator - Bottom Left */}
+      <div className="absolute bottom-4 md:bottom-8 left-4 md:left-8 glass-cyber-strong rounded-3xl p-6 md:p-8 pointer-events-auto max-w-sm border-2" style={{ borderColor: theme.colors.cyan.glow, boxShadow: theme.effects.glowCyan }}>
+        <div className="mono-label text-cyan-300/70 mb-4">Snow Level</div>
+        <div className="w-56 md:w-64 h-8 md:h-9 rounded-full overflow-hidden border-2 shadow-inner" style={{ background: 'linear-gradient(to right, rgba(15, 23, 42, 0.8), rgba(10, 22, 40, 0.9))', borderColor: theme.colors.cyan.glow }}>
           <div
-            className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-red-500 transition-all duration-300 shadow-lg"
-            style={{ width: `${snowPilePercent * 100}%` }}
+            className="h-full transition-all duration-300 shadow-lg"
+            style={{ 
+              width: Math.floor(snowPilePercent * 100) + '%',
+              background: getSnowGradient(),
+              boxShadow: getSnowGlow()
+            }}
           />
         </div>
-        <div className="text-xs md:text-sm text-gray-300 mt-2 text-right font-semibold">
+        <div className="text-sm md:text-base mt-3 text-right font-semibold font-mono" style={{ color: snowPilePercent > 0.75 ? theme.colors.functional.danger : theme.colors.cyan.bright }}>
           {Math.floor(snowPilePercent * 100)}%
         </div>
       </div>

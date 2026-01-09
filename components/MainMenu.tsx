@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { theme } from '@/lib/theme'
 import Leaderboard from './Leaderboard'
 
 interface MainMenuProps {
@@ -12,7 +13,6 @@ export default function MainMenu({ onStart }: MainMenuProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Fetch weather message
     const fetchWeather = async () => {
       try {
         const position = await new Promise<GeolocationCoordinates>((resolve, reject) => {
@@ -38,106 +38,114 @@ export default function MainMenu({ onStart }: MainMenuProps) {
   }, [])
 
   return (
-    <div className="flex flex-col items-center justify-between w-full h-full overflow-y-auto" style={{
-      background: 'linear-gradient(135deg, #0f172a 0%, #1a2a4a 25%, #0f3a5a 50%, #1a2a4a 75%, #0f172a 100%)'
-    }}>
-      {/* Animated background snowflakes */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute opacity-10 text-white text-8xl"
-            style={{
-              left: `${20 + i * 15}%`,
-              top: `${10 + i * 15}%`,
-              animation: `float ${8 + i * 2}s infinite ease-in-out`
-            }}
-          >
+    <div className="w-full h-full overflow-y-auto relative" style={{ background: `linear-gradient(135deg, ${theme.colors.bg.primary} 0%, ${theme.colors.bg.tertiary} 25%, #0f3a5a 50%, ${theme.colors.bg.tertiary} 75%, ${theme.colors.bg.primary} 100%)` }}>
+      <style>{`
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes subtle-float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(8px); }
+        }
+        .animate-fade-down { animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .animate-slide-up { animation: slideInUp 0.8s ease-out forwards; }
+        .animate-float { animation: subtle-float 6s ease-in-out infinite; }
+      `}</style>
+
+      {/* Decorative snowflake background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden opacity-5">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="absolute text-9xl font-display" style={{ left: `${10 + i * 30}%`, top: `${-10 + i * 40}%` }}>
             ❄️
           </div>
         ))}
       </div>
 
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(20px) rotate(180deg); }
-        }
-        @keyframes pulse-glow {
-          0%, 100% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-          50% { text-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
-        }
-      `}</style>
-
-      <div className="flex-1 flex flex-col items-center justify-center w-full relative z-10 px-4 md:px-8">
-        {/* Title Section */}
-        <div className="text-center mb-8 md:mb-12">
-          <div className="mb-4">
-            <span className="text-6xl md:text-8xl">❄️</span>
+      <div className="relative z-10 flex flex-col min-h-full">
+        {/* Hero Section */}
+        <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-8 pt-12 md:pt-20">
+          {/* Snowflake Icon */}
+          <div className="mb-8 md:mb-12 animate-float" style={{ animationDelay: '0s' }}>
+            <span className="text-9xl md:text-10xl block">❄️</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-black mb-3 text-white drop-shadow-2xl" style={{
-            background: 'linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>
+
+          {/* Title */}
+          <h1 className="font-display text-6xl md:text-8xl font-black mb-4 animate-fade-down text-center leading-tight" style={{ backgroundImage: theme.gradients.titleText, backgroundClip: 'text', WebkitBackgroundClip: 'text', color: 'transparent' }}>
             Snowcrastination
           </h1>
-          <p className="text-lg md:text-2xl text-blue-200 font-light tracking-wide mb-6">
+
+          {/* Subtitle */}
+          <p className="text-lg md:text-2xl font-light tracking-wide mb-8 md:mb-12 animate-fade-down text-center max-w-2xl" style={{ color: theme.colors.cyan.bright, animationDelay: '0.1s' }}>
             Defend your cozy cabin from the blizzard
           </p>
 
-          {/* Weather Message Card */}
+          {/* Weather Card */}
           {loading ? (
-            <div className="text-blue-300 text-sm">Loading weather...</div>
+            <div style={{ color: theme.colors.cyan.bright }} className="text-sm mb-8">Loading weather...</div>
           ) : weatherMessage && (
-            <div className="bg-gradient-to-r from-blue-600/40 to-cyan-600/40 rounded-xl p-4 md:p-6 mb-8 border-2 border-blue-400/50 backdrop-blur-sm">
-              <p className="text-lg md:text-2xl text-white font-semibold">{weatherMessage}</p>
+            <div 
+              className="rounded-2xl p-6 md:p-8 mb-10 md:mb-14 border-2 max-w-md w-full animate-slide-up glass-cyber"
+              style={{ 
+                animationDelay: '0.2s', 
+                borderColor: theme.colors.cyan.glow,
+                boxShadow: theme.effects.glowCyan
+              }}
+            >
+              <p className="text-lg md:text-xl font-semibold text-center" style={{ color: theme.colors.neutral.ice }}>{weatherMessage}</p>
             </div>
           )}
         </div>
 
-        {/* Start Button */}
-        <button
-          onClick={onStart}
-          className="relative px-10 md:px-12 py-4 md:py-5 mb-10 md:mb-12 text-2xl md:text-3xl font-bold text-white rounded-xl shadow-2xl transform transition-all duration-200 hover:scale-110 active:scale-95 overflow-hidden group"
-          style={{
-            background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff6b35 100%)'
-          }}
-        >
-          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-          <span className="relative flex items-center justify-center gap-2">
-            🎮 START GAME
-          </span>
-        </button>
+        {/* START GAME Button - PRIMARY ACTION */}
+        <div className="px-4 md:px-8 pb-8 md:pb-12">
+          <button
+            onClick={onStart}
+            className="w-full md:w-auto mx-auto block px-12 md:px-16 py-4 md:py-6 text-2xl md:text-3xl font-display font-bold text-white rounded-2xl transform transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden group relative"
+            style={{ 
+              background: theme.gradients.buttonPrimary,
+              boxShadow: theme.effects.glowGoldStrong
+            }}
+          >
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-15 transition-opacity" />
+            <span className="relative flex items-center justify-center gap-3">🎮 START GAME</span>
+          </button>
+        </div>
 
         {/* Leaderboard Section */}
-        <div className="w-full max-w-md mb-8 md:mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 md:mb-6 text-center flex items-center justify-center gap-2">
-            <span>🏆</span>
-            <span>Top Players</span>
-            <span>🏆</span>
-          </h2>
-          <div className="bg-gradient-to-b from-slate-700/60 to-slate-900/60 rounded-2xl p-6 md:p-8 border-2 border-slate-500/30 backdrop-blur-md shadow-2xl">
-            <Leaderboard />
+        <div className="px-4 md:px-8 pb-12 md:pb-16">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center justify-center gap-4 mb-6 md:mb-8">
+              <div className="h-1 flex-1" style={{ backgroundImage: `linear-gradient(to right, transparent, ${theme.colors.cyan.glow})` }} />
+              <h2 className="font-display text-3xl md:text-4xl font-bold" style={{ color: theme.colors.neutral.ice }}>🏆 Hall of Fame</h2>
+              <div className="h-1 flex-1" style={{ backgroundImage: `linear-gradient(to left, transparent, ${theme.colors.cyan.glow})` }} />
+            </div>
+            <div className="rounded-3xl p-8 md:p-10 glass-cyber-strong" style={{ borderColor: theme.colors.cyan.dim, boxShadow: theme.effects.glowCyan }}>
+              <Leaderboard />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <div className="w-full text-center py-6 md:py-8 px-4 md:px-8 border-t border-slate-700/50 relative z-10">
-        <a
-          href="https://buymeacoffee.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block px-8 md:px-10 py-3 md:py-4 text-lg md:text-xl font-bold text-white rounded-xl shadow-lg transform transition-all duration-200 hover:scale-110 active:scale-95 overflow-hidden group"
-          style={{
-            background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)'
-          }}
-        >
-          <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
-          <span className="relative">☕ Support Development</span>
-        </a>
+        {/* Footer */}
+        <div className="w-full text-center py-6 md:py-8 px-4 md:px-8 border-t bg-white/5 backdrop-blur-sm" style={{ borderTopColor: theme.colors.cyan.dim }}>
+          <a
+            href="https://buymeacoffee.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-8 md:px-10 py-3 md:py-4 text-lg md:text-xl font-bold text-white rounded-xl transform transition-all duration-200 hover:scale-110 active:scale-95 overflow-hidden group"
+            style={{ 
+              background: theme.gradients.buttonSecondary,
+              boxShadow: theme.effects.glowCyan
+            }}
+          >
+            <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+            <span className="relative">☕ Support Development</span>
+          </a>
+        </div>
       </div>
     </div>
   )
