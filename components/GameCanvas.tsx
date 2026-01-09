@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { GameEngine } from '@/lib/game/GameEngine'
+import { loadGameGraphics } from '@/lib/graphics/graphicsLoader'
 import GameHUD from './GameHUD'
 import GameOverScreen from './GameOver'
 
@@ -33,35 +34,47 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
     setCanvasSize()
     window.addEventListener('resize', setCanvasSize)
 
-    // Initialize game engine
-    const gameEngine = new GameEngine(canvas, ctx)
-    gameEngineRef.current = gameEngine
+    // Load graphics and initialize game engine
+    const initializeGame = async () => {
+      const imageUrls = await loadGameGraphics()
+      const gameEngine = new GameEngine(canvas, ctx, imageUrls)
+      gameEngineRef.current = gameEngine
 
-    // Handle game over
-    const handleGameOver = () => {
-      setIsGameOver(true)
-      setScore(gameEngine.getScore())
-    }
+      // Handle game over
+      const handleGameOver = () => {
+        setIsGameOver(true)
+        setScore(gameEngine.getScore())
+      }
 
-    gameEngine.onGameOver = handleGameOver
+      gameEngine.onGameOver = handleGameOver
 
-    // Game loop
-    let animationFrameId: number
-    const gameLoop = () => {
-      gameEngine.update()
-      gameEngine.render()
+      // Game loop
+      let animationFrameId: number
+      const gameLoop = () => {
+        gameEngine.update()
+        gameEngine.render()
 
-      setScore(gameEngine.getScore())
-      setSnowPilePercent(gameEngine.getSnowPilePercent())
+        setScore(gameEngine.getScore())
+        setSnowPilePercent(gameEngine.getSnowPilePercent())
+
+        animationFrameId = requestAnimationFrame(gameLoop)
+      }
 
       animationFrameId = requestAnimationFrame(gameLoop)
+
+      return () => {
+        cancelAnimationFrame(animationFrameId)
+      }
     }
 
-    animationFrameId = requestAnimationFrame(gameLoop)
+    let cleanup: (() => void) | null = null
+    initializeGame().then(cleanup => {
+      cleanup = cleanup
+    })
 
     return () => {
       window.removeEventListener('resize', setCanvasSize)
-      cancelAnimationFrame(animationFrameId)
+      cleanup?.()
     }
   }, [])
 

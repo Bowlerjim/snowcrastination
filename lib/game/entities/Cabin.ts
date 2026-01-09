@@ -1,3 +1,5 @@
+import { ImageManager } from '../ImageManager'
+
 export class Cabin {
   x: number
   y: number
@@ -9,10 +11,12 @@ export class Cabin {
     vy: number
     life: number
   }> = []
+  imageUrl?: string
 
-  constructor(x: number, y: number) {
+  constructor(x: number, y: number, imageUrl?: string) {
     this.x = x
     this.y = y
+    this.imageUrl = imageUrl
   }
 
   update(snowPilePercent: number) {
@@ -41,6 +45,22 @@ export class Cabin {
   }
 
   render(ctx: CanvasRenderingContext2D, snowPilePercent: number) {
+    // Try to render image first
+    if (this.imageUrl) {
+      const image = ImageManager.getImageSync(this.imageUrl)
+      if (image) {
+        ctx.drawImage(image, this.x - this.width / 2, this.y, this.width, this.height)
+        const lightIntensity = Math.max(0.2, 1 - snowPilePercent)
+        this.renderSmoke(ctx, lightIntensity)
+        return
+      }
+    }
+
+    // Fallback: Draw cabin with geometric shapes
+    this.renderFallback(ctx, snowPilePercent)
+  }
+
+  private renderFallback(ctx: CanvasRenderingContext2D, snowPilePercent: number) {
     // Calculate brightness based on snow pile
     const brightness = Math.max(0.3, 1 - snowPilePercent * 0.7)
     const lightIntensity = Math.max(0.2, 1 - snowPilePercent)
@@ -86,6 +106,10 @@ export class Cabin {
     ctx.fillRect(this.x + 20, this.y - 35, 12, 35)
 
     // Draw smoke
+    this.renderSmoke(ctx, lightIntensity)
+  }
+
+  private renderSmoke(ctx: CanvasRenderingContext2D, lightIntensity: number) {
     ctx.globalAlpha = 0.6
     ctx.fillStyle = `rgba(200, 200, 200, ${lightIntensity * 0.8})`
     for (const particle of this.smokeParticles) {

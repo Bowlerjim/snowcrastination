@@ -1,3 +1,5 @@
+import { ImageManager } from '../ImageManager'
+
 export type SnowflakeSize = 'small' | 'medium' | 'large'
 
 export class Snowflake {
@@ -8,11 +10,13 @@ export class Snowflake {
   size: number
   radius: number
   sizeType: SnowflakeSize
+  imageUrl?: string
 
-  constructor(x: number, y: number, sizeType: SnowflakeSize = 'small') {
+  constructor(x: number, y: number, sizeType: SnowflakeSize = 'small', imageUrl?: string) {
     this.x = x
     this.y = y
     this.sizeType = sizeType
+    this.imageUrl = imageUrl
 
     switch (sizeType) {
       case 'large':
@@ -43,6 +47,17 @@ export class Snowflake {
   }
 
   render(ctx: CanvasRenderingContext2D) {
+    // Try to render image first, fall back to canvas drawing
+    if (this.imageUrl) {
+      const image = ImageManager.getImageSync(this.imageUrl)
+      if (image) {
+        const diameter = this.radius * 2
+        ctx.drawImage(image, this.x - this.radius, this.y - this.radius, diameter, diameter)
+        return
+      }
+    }
+
+    // Fallback: draw simple white circle
     ctx.beginPath()
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
     ctx.fill()

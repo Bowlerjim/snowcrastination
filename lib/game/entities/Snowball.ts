@@ -1,3 +1,5 @@
+import { ImageManager } from '../ImageManager'
+
 export class Snowball {
   x: number
   y: number
@@ -7,10 +9,12 @@ export class Snowball {
   speed = 8
   trail: Array<{ x: number; y: number }> = []
   maxTrailLength = 5
+  imageUrl?: string
 
-  constructor(startX: number, startY: number, targetX: number, targetY: number) {
+  constructor(startX: number, startY: number, targetX: number, targetY: number, imageUrl?: string) {
     this.x = startX
     this.y = startY
+    this.imageUrl = imageUrl
 
     // Calculate direction
     const dx = targetX - startX
@@ -46,7 +50,17 @@ export class Snowball {
       ctx.stroke()
     }
 
-    // Draw snowball
+    // Try to render image first, fall back to canvas drawing
+    if (this.imageUrl) {
+      const image = ImageManager.getImageSync(this.imageUrl)
+      if (image) {
+        const diameter = this.radius * 2
+        ctx.drawImage(image, this.x - this.radius, this.y - this.radius, diameter, diameter)
+        return
+      }
+    }
+
+    // Fallback: draw white circle
     ctx.fillStyle = '#ffffff'
     ctx.beginPath()
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)

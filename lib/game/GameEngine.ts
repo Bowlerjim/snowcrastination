@@ -18,13 +18,19 @@ export class GameEngine {
   private spawnInterval = 120 // frames between spawns
   private gameTime = 0
   private audioManager: AudioManager
+  private imageUrls?: { cabin?: string; snowflake?: string; snowball?: string }
 
   onGameOver?: () => void
 
-  constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    imageUrls?: { cabin?: string; snowflake?: string; snowball?: string }
+  ) {
     this.canvas = canvas
     this.ctx = ctx
-    this.cabin = new Cabin(canvas.width / 2, canvas.height - 100)
+    this.imageUrls = imageUrls
+    this.cabin = new Cabin(canvas.width / 2, canvas.height - 100, imageUrls?.cabin)
     this.audioManager = new AudioManager()
 
     this.setupInput()
@@ -50,7 +56,8 @@ export class GameEngine {
       this.cabin.x,
       this.cabin.y,
       targetX,
-      targetY
+      targetY,
+      this.imageUrls?.snowball
     )
     this.snowballs.push(snowball)
     this.audioManager.playSoundEffect('throw')
@@ -177,7 +184,7 @@ export class GameEngine {
   private spawnSnowflake() {
     const x = Math.random() * this.canvas.width
     const size = Math.random() > 0.7 ? 'large' : Math.random() > 0.4 ? 'medium' : 'small'
-    const snowflake = new Snowflake(x, -20, size as any)
+    const snowflake = new Snowflake(x, -20, size as any, this.imageUrls?.snowflake)
     this.snowflakes.push(snowflake)
   }
 
