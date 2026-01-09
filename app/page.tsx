@@ -10,8 +10,7 @@ export default function Home() {
   useEffect(() => {
     // Prevent scrolling and zoom on mobile
     const preventZoom = (e: Event) => {
-      const touchEvent = e as TouchEvent
-      if (touchEvent.touches.length > 1) {
+      if ((e as any).touches?.length > 1) {
         e.preventDefault()
       }
     }
