@@ -8,6 +8,8 @@ export default function Home() {
   const [gameStarted, setGameStarted] = useState(false)
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     // Prevent scrolling and zoom on mobile
     const preventZoom = (e: Event) => {
       if ((e as any).touches?.length > 1) {
