@@ -263,3 +263,151 @@ const getSnowGradient = () => {
 **Last Redesign**: Cyberpunk Winter UI (dark blue + electric cyan + warm gold)
 **Author**: Claude Code + Haiku
 **Status**: Production Ready ✅
+
+---
+
+## Vercel & GitHub Integration
+
+### How Deployment Works
+
+**Setup**: Snowcrastination is connected to Vercel via GitHub
+- **Repository**: github.com/Bowlerjim/snowcrastination
+- **Branch**: `main` auto-deploys to production
+- **Preview Branches**: Any PR gets automatic preview deployments
+
+### Vercel Dashboard
+1. Go to vercel.com and sign in
+2. Select "snowcrastination" project
+3. View:
+   - **Deployments**: History of all deploys with status
+   - **Logs**: Real-time build and runtime logs
+   - **Environment Variables**: API keys, secrets (Postgres, OpenWeather, etc.)
+   - **Settings**: Domain, Git integration, build commands
+
+### Deployment Flow
+```
+You push to main
+    ↓
+GitHub webhook triggers Vercel
+    ↓
+Vercel runs: bun install && bun run build
+    ↓
+Vercel deploys new version
+    ↓
+Live at your Vercel URL (snowcrastination.vercel.app or custom domain)
+```
+
+### GitHub Integration Details
+
+**What's Connected:**
+- `main` branch = production deployment
+- Pull requests = automatic preview deployments
+- Each commit triggers a build
+
+**Check Deployment Status:**
+1. Push to GitHub: `git push`
+2. Go to github.com/Bowlerjim/snowcrastination
+3. Look for green checkmark next to commit (deployment successful)
+4. Click checkmark → "Details" → View Vercel deployment
+
+**Rollback to Previous Version:**
+1. Go to Vercel dashboard
+2. Find previous deployment in history
+3. Click "Promote to Production"
+4. Or revert commit in GitHub: `git revert [commit-hash]` then push
+
+### Environment Variables
+
+**In Vercel Project Settings:**
+- `NEXT_PUBLIC_OPENWEATHER_API_KEY` - Weather API key
+- `POSTGRES_URL` - Database connection (if using Vercel Postgres)
+- Any other secrets stored here (never commit to git)
+
+**How to Add:**
+1. Vercel dashboard → Settings → Environment Variables
+2. Add key-value pairs
+3. Redeploy for changes to take effect
+
+### GitHub Secrets (if needed for CI/CD)
+Stored in: github.com/Bowlerjim/snowcrastination → Settings → Secrets
+- Used for automated scripts
+- Not needed for basic Vercel integration (Vercel handles auth)
+
+### Monitoring Deployments
+
+**Quick Health Check:**
+```bash
+curl https://snowcrastination.vercel.app/api/health
+```
+Returns JSON with status if app is running.
+
+**View Logs:**
+1. Vercel dashboard → Deployments → [latest]
+2. Scroll to see build logs and function logs
+3. Check for errors during build or runtime
+
+### Common Issues & Solutions
+
+**Issue**: Build fails after push
+- Check Vercel logs for error message
+- Likely: TypeScript error, missing dependency
+- Fix: Run `bun run build` locally first, commit again
+
+**Issue**: Old version still showing
+- Hard refresh browser: Cmd+Shift+R (Mac) / Ctrl+Shift+R (Windows)
+- Clear browser cache
+- Check Vercel deployment is marked "Ready"
+
+**Issue**: Environment variables not working
+- Verify they're set in Vercel dashboard
+- Redeploy after adding (Settings → Redeploy)
+- Variables only available at build time for `NEXT_PUBLIC_*`
+
+### Useful Vercel Commands (if using Vercel CLI)
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy (creates preview)
+vercel
+
+# Deploy to production
+vercel --prod
+
+# View logs
+vercel logs
+```
+
+### GitHub Actions (Optional Future Automation)
+
+If you want automated tests/checks before deploy:
+1. Create `.github/workflows/ci.yml`
+2. Define tests/linting to run on push
+3. Vercel waits for GitHub checks before deploying
+
+Example (not currently set up):
+```yaml
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install
+      - run: bun run build
+      - run: bun run type-check
+```
+
+---
+
+**TL;DR for Auto-Claude:**
+- Push to main → auto-deploys to Vercel
+- Check status on Vercel dashboard or GitHub commit checkmark
+- Environment variables in Vercel Settings (not in git)
+- View logs in Vercel dashboard if something breaks
