@@ -19,6 +19,7 @@ export class Cabin {
     // Update smoke particles
     for (let i = this.smokeParticles.length - 1; i >= 0; i--) {
       const particle = this.smokeParticles[i]
+      if (!particle) continue
       particle.y += particle.vy
       particle.vy *= 0.98
       particle.life -= 0.02
@@ -89,6 +90,7 @@ export class Cabin {
     ctx.globalAlpha = 0.6
     ctx.fillStyle = `rgba(200, 200, 200, ${lightIntensity * 0.8})`
     for (const particle of this.smokeParticles) {
+      if (!particle) continue
       ctx.beginPath()
       ctx.arc(particle.x, particle.y, 5 * particle.life, 0, Math.PI * 2)
       ctx.fill()
