@@ -34,6 +34,13 @@
 - [Next Steps for Enhancement](#next-steps-for-enhancement)
 - [Deployment Status](#deployment-status)
 - [Tips for Auto-Claude](#tips-for-auto-claude)
+  - [Design & Styling Conventions](#design--styling-conventions)
+  - [Session Context & Build Progress](#session-context--build-progress)
+  - [File Discovery Patterns](#file-discovery-patterns)
+  - [Common Task Workflows](#common-task-workflows)
+  - [Commit Message Conventions](#commit-message-conventions)
+  - [Debugging & Verification](#debugging--verification)
+  - [Best Practices](#best-practices)
 - [Vercel & GitHub Integration](#vercel--github-integration)
   - [How Deployment Works](#how-deployment-works)
   - [Vercel Dashboard](#vercel-dashboard)
@@ -300,11 +307,143 @@ const getSnowGradient = () => {
 
 ## Tips for Auto-Claude
 
-1. **Always reference `lib/theme.ts`** when making style changes
-2. **Use component exploration** to understand existing patterns
-3. **Test theme changes locally** before pushing
+### Design & Styling Conventions
+
+1. **Always reference `lib/theme.ts`** when making style changes - this is the single source of truth
+2. **Use component exploration** to understand existing patterns before implementing new features
+3. **Test theme changes locally** with `bun run dev` before pushing
 4. **Keep design decisions bold** - Cyberpunk Winter is intentional and distinctive
 5. **Maintain cyan/gold balance** - 70/30 split is critical for cohesion
+
+### Session Context & Build Progress
+
+6. **Use MCP tools for session context** - Record discoveries and gotchas for future sessions:
+   ```bash
+   # Record a discovery
+   mcp__auto-claude__record_discovery(file_path, description, category)
+
+   # Record a gotcha/pitfall to avoid
+   mcp__auto-claude__record_gotcha(gotcha, context)
+
+   # Get context from previous sessions
+   mcp__auto-claude__get_session_context()
+   ```
+
+7. **Track build progress** - Always check and update the implementation plan:
+   ```bash
+   # Check current progress
+   mcp__auto-claude__get_build_progress()
+
+   # Update subtask status after completing work
+   mcp__auto-claude__update_subtask_status(subtask_id, status, notes)
+   ```
+
+8. **Reference the spec files** when starting work:
+   - `.auto-claude/specs/[feature]/spec.md` - High-level requirements
+   - `.auto-claude/specs/[feature]/implementation_plan.json` - Detailed subtasks
+   - `.auto-claude/specs/[feature]/context.json` - Service-specific context
+
+### File Discovery Patterns
+
+9. **Use glob for finding files by pattern**:
+   ```bash
+   # Find all React components
+   Glob("components/**/*.tsx")
+
+   # Find all game-related files
+   Glob("lib/game/**/*.ts")
+
+   # Find test files
+   Glob("**/*.test.ts")
+   ```
+
+10. **Use grep for searching content**:
+    ```bash
+    # Find theme usage across codebase
+    Grep("theme\.", type="tsx")
+
+    # Find API endpoint definitions
+    Grep("export.*GET|POST", path="app/api")
+    ```
+
+11. **Key directories to know**:
+    - `/app` - Next.js pages and API routes
+    - `/components` - React components
+    - `/lib` - Utilities, theme, game engine
+    - `/public` - Static assets (images, fonts)
+    - `.auto-claude/specs/` - Spec and plan files
+
+### Common Task Workflows
+
+12. **For UI changes**:
+    1. Read `lib/theme.ts` for available colors/effects
+    2. Check existing component for similar patterns
+    3. Make changes using theme values
+    4. Test locally: `bun run dev`
+    5. Verify no TypeScript errors: `bun run build`
+
+13. **For game logic changes**:
+    1. Read `lib/game/GameEngine.ts` for game loop
+    2. Check relevant entity files in `lib/game/entities/`
+    3. Make changes, test gameplay locally
+    4. Verify collision/physics in `lib/game/collision.ts`
+
+14. **For API changes**:
+    1. Check existing route in `app/api/`
+    2. Follow same pattern for request/response handling
+    3. Test endpoint locally: `curl http://localhost:3000/api/[route]`
+    4. Handle errors gracefully with try/catch
+
+### Commit Message Conventions
+
+15. **Follow this commit format**:
+    ```
+    auto-claude: [subtask-id] - [brief description]
+    ```
+    Examples:
+    - `auto-claude: subtask-1-2 - Expand Tips for Auto-Claude section`
+    - `auto-claude: subtask-2-1 - Add audio system documentation`
+    - `fix: resolve TypeScript error in GameEngine`
+    - `feat: add touch controls for mobile`
+
+16. **For multi-file changes**, use descriptive body:
+    ```bash
+    git commit -m "$(cat <<'EOF'
+    auto-claude: subtask-X-Y - Feature description
+
+    - Added component A
+    - Updated component B
+    - Fixed issue C
+    EOF
+    )"
+    ```
+
+### Debugging & Verification
+
+17. **Before committing, always verify**:
+    ```bash
+    bun run build          # Check for TypeScript/build errors
+    bun run dev            # Manual testing at localhost:3000
+    git diff               # Review changes before staging
+    ```
+
+18. **If build fails**:
+    1. Read error message carefully
+    2. Check line numbers referenced
+    3. Fix TypeScript errors (type mismatches, missing imports)
+    4. Re-run `bun run build` until clean
+
+19. **Check deployment health after push**:
+    ```bash
+    curl https://snowcrastination.vercel.app/api/health
+    ```
+
+### Best Practices
+
+20. **Preserve existing patterns** - Don't reinvent when existing code shows the way
+21. **Add comments for complex logic** - Especially in game engine code
+22. **Keep commits atomic** - One subtask = one commit when possible
+23. **Update build-progress.txt** - Log what you accomplished each session
 
 ---
 
