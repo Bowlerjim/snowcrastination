@@ -1,5 +1,53 @@
 # Snowcrastination - Auto-Claude Project Guide
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Architecture](#architecture)
+  - [Tech Stack](#tech-stack)
+  - [Key Files & Directories](#key-files--directories)
+- [Design System: Cyberpunk Winter](#design-system-cyberpunk-winter)
+  - [Centralized Theme Configuration](#centralized-theme-configuration)
+  - [Color Palette](#color-palette)
+  - [CSS Utilities](#css-utilities-in-globalscss)
+- [How to Iterate & Update Styles](#how-to-iterate--update-styles)
+  - [Quick Color Changes](#quick-color-changes)
+  - [Add New Gradient](#add-new-gradient)
+  - [Modify Glow Effect Intensity](#modify-glow-effect-intensity)
+  - [Add CSS Utility Class](#add-css-utility-class)
+- [Game Mechanics](#game-mechanics)
+  - [Core Loop](#core-loop)
+  - [Scoring](#scoring)
+  - [Game State](#game-state)
+- [UI Components - Design Notes](#ui-components---design-notes)
+  - [MainMenu](#mainmenu)
+  - [GameHUD (Overlay)](#gamehud-overlay)
+  - [GameOver](#gameover)
+  - [Leaderboard](#leaderboard)
+- [API Endpoints](#api-endpoints)
+- [Development Workflow](#development-workflow)
+  - [Local Testing](#local-testing)
+  - [Make Changes](#make-changes)
+  - [Deploy](#deploy)
+- [Performance Considerations](#performance-considerations)
+- [Known Patterns](#known-patterns)
+- [Next Steps for Enhancement](#next-steps-for-enhancement)
+- [Deployment Status](#deployment-status)
+- [Tips for Auto-Claude](#tips-for-auto-claude)
+- [Vercel & GitHub Integration](#vercel--github-integration)
+  - [How Deployment Works](#how-deployment-works)
+  - [Vercel Dashboard](#vercel-dashboard)
+  - [Deployment Flow](#deployment-flow)
+  - [GitHub Integration Details](#github-integration-details)
+  - [Environment Variables](#environment-variables)
+  - [GitHub Secrets](#github-secrets-if-needed-for-cicd)
+  - [Monitoring Deployments](#monitoring-deployments)
+  - [Common Issues & Solutions](#common-issues--solutions)
+  - [Useful Vercel Commands](#useful-vercel-commands-if-using-vercel-cli)
+  - [GitHub Actions](#github-actions-optional-future-automation)
+
+---
+
 ## Project Overview
 A cozy snowball defense game with a Cyberpunk Winter aesthetic, AI-generated graphics via Gemini 3 Pro, and a leaderboard system.
 
