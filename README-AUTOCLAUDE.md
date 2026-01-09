@@ -40,6 +40,12 @@
   - [Make Changes](#make-changes)
   - [Deploy](#deploy)
 - [Performance Considerations](#performance-considerations)
+- [Testing Patterns](#testing-patterns)
+  - [Local Development Checklist](#local-development-checklist)
+  - [API Endpoint Testing](#api-endpoint-testing)
+  - [Browser Testing Checklist](#browser-testing-checklist)
+  - [Mobile Testing](#mobile-testing)
+  - [Performance Testing](#performance-testing)
 - [Known Patterns](#known-patterns)
 - [Next Steps for Enhancement](#next-steps-for-enhancement)
 - [Deployment Status](#deployment-status)
@@ -68,7 +74,7 @@
 ## Project Overview
 A cozy snowball defense game with a Cyberpunk Winter aesthetic, AI-generated graphics via Gemini 3 Pro, and a leaderboard system.
 
-**Status**: Deployed to Vercel | **Last Updated**: Cyberpunk Winter UI redesign complete
+**Status**: Deployed to Vercel | **Last Updated**: Documentation enhanced (Audio, Mobile Controls, Testing Patterns, expanded Auto-Claude tips)
 
 ## Architecture
 
@@ -459,6 +465,81 @@ git push                # Auto-deploys to Vercel
 - **Image Caching**: ImageManager prevents redundant loads
 - **Minimal Re-renders**: Game logic isolated in Canvas
 - **Web Audio**: Synthesized sounds (no external files)
+
+## Testing Patterns
+
+### Local Development Checklist
+
+Before committing changes, run through this checklist:
+
+1. **Build verification**
+   ```bash
+   bun run build    # Catches TypeScript errors and build issues
+   ```
+
+2. **Type checking** (if separate script exists)
+   ```bash
+   bun run type-check
+   ```
+
+3. **Local server testing**
+   ```bash
+   bun run dev      # Test at http://localhost:3000
+   ```
+
+### API Endpoint Testing
+
+Test API routes locally using curl:
+
+```bash
+# Health check
+curl http://localhost:3000/api/health
+
+# Get leaderboard
+curl http://localhost:3000/api/leaderboard
+
+# Submit score (POST)
+curl -X POST http://localhost:3000/api/leaderboard \
+  -H "Content-Type: application/json" \
+  -d '{"playerName": "TestPlayer", "score": 100}'
+
+# Weather endpoint
+curl http://localhost:3000/api/weather
+```
+
+### Browser Testing Checklist
+
+When testing in the browser, verify:
+
+- [ ] **Console**: No JavaScript errors (open DevTools → Console)
+- [ ] **Network**: All requests return 200 OK (DevTools → Network)
+- [ ] **Game Loop**: Snowflakes fall, snowballs fire, collision detection works
+- [ ] **Audio**: Sound effects play (unmuted), fire ambience works
+- [ ] **Responsive**: HUD elements scale properly at different viewport sizes
+
+### Mobile Testing
+
+For mobile/touch testing:
+
+1. Use Chrome DevTools device emulation (Cmd/Ctrl + Shift + M)
+2. Test touch interactions on actual devices when possible
+3. Verify:
+   - [ ] Touch-to-shoot works
+   - [ ] No unwanted zoom/scroll on canvas
+   - [ ] Buttons are tap-friendly (44x44px minimum)
+   - [ ] HUD readable on small screens
+
+### Performance Testing
+
+Basic performance verification:
+
+```bash
+# Check bundle size
+bun run build && ls -lh .next/static/chunks/
+
+# Lighthouse audit (in Chrome DevTools)
+# Target: 90+ Performance score
+```
 
 ## Known Patterns
 
