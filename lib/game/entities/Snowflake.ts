@@ -17,23 +17,23 @@ export class Snowflake {
     switch (sizeType) {
       case 'large':
         this.size = 3
-        this.radius = 5
-        this.vy = 0.3
+        this.radius = 15
+        this.vy = 0.15
         break
       case 'medium':
         this.size = 2
-        this.radius = 3
-        this.vy = 0.4
+        this.radius = 9
+        this.vy = 0.2
         break
       case 'small':
       default:
         this.size = 1
-        this.radius = 2
-        this.vy = 0.5
+        this.radius = 6
+        this.vy = 0.25
     }
 
     // Add slight random horizontal drift
-    this.vx = (Math.random() - 0.5) * 0.2
+    this.vx = (Math.random() - 0.5) * 0.3
   }
 
   update() {
