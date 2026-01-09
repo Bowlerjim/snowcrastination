@@ -72,7 +72,6 @@ export class GameEngine {
     // Update snowflakes
     for (let i = this.snowflakes.length - 1; i >= 0; i--) {
       const snowflake = this.snowflakes[i]
-      if (!snowflake) continue
       snowflake.update()
 
       // Check if hit ground
@@ -86,7 +85,6 @@ export class GameEngine {
     // Update snowballs
     for (let i = this.snowballs.length - 1; i >= 0; i--) {
       const snowball = this.snowballs[i]
-      if (!snowball) continue
       snowball.update()
 
       // Check if off-screen
@@ -103,7 +101,6 @@ export class GameEngine {
       // Check collisions with snowflakes
       for (let j = this.snowflakes.length - 1; j >= 0; j--) {
         const flake = this.snowflakes[j]
-        if (!flake) continue
         if (checkCollision(snowball, flake)) {
           const points = flake.getPoints()
           this.score += points
