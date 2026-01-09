@@ -30,7 +30,8 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { playerName, score } = await request.json()
+    const body = (await request.json()) as { playerName?: unknown; score?: unknown }
+    const { playerName, score } = body
 
     // Validate input
     if (!playerName || typeof playerName !== 'string') {
