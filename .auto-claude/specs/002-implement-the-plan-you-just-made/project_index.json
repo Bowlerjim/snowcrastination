@@ -1,0 +1,74 @@
+{
+  "project_root": "/Users/jim/snowcrastination",
+  "project_type": "single",
+  "services": {
+    "main": {
+      "name": "main",
+      "path": "/Users/jim/snowcrastination",
+      "language": "JavaScript",
+      "framework": "Next.js",
+      "type": "frontend",
+      "package_manager": "bun",
+      "default_port": 3000,
+      "styling": "Tailwind CSS",
+      "dev_command": "npm run dev",
+      "key_directories": {
+        "lib": {
+          "path": "lib",
+          "purpose": "Library code"
+        },
+        "app": {
+          "path": "app",
+          "purpose": "Application code"
+        },
+        "components": {
+          "path": "components",
+          "purpose": "UI components"
+        }
+      },
+      "dependencies": [
+        "@google/generative-ai",
+        "@tailwindcss/postcss",
+        "next",
+        "react",
+        "react-dom"
+      ],
+      "dev_dependencies": [
+        "@types/bun",
+        "@types/node",
+        "@types/react",
+        "@types/react-dom",
+        "autoprefixer",
+        "eslint",
+        "eslint-config-next",
+        "postcss",
+        "tailwindcss"
+      ],
+      "environment": {
+        "variables": {
+          "OPENWEATHER_API_KEY": {
+            "value": null,
+            "source": ".env.example",
+            "type": "string",
+            "sensitive": true,
+            "required": true
+          },
+          "POSTGRES_URL": {
+            "value": null,
+            "source": ".env.example",
+            "type": "string",
+            "sensitive": false,
+            "required": true
+          }
+        },
+        "required_count": 2,
+        "optional_count": 0,
+        "detected_count": 2
+      }
+    }
+  },
+  "infrastructure": {},
+  "conventions": {
+    "typescript": true
+  }
+}

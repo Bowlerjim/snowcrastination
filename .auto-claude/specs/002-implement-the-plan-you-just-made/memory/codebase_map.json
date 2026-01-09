@@ -1,0 +1,20 @@
+{
+  "discovered_files": {
+    "lib/game/GameEngine.ts": {
+      "description": "Core game engine with complete implementation: snowflake spawning, snowball shooting, collision detection, scoring system, snow pile mechanic for lose condition, and difficulty scaling over time",
+      "category": "architecture",
+      "discovered_at": "2026-01-09T22:03:14.140052+00:00"
+    },
+    "lib/audio/AudioManager.ts": {
+      "description": "Web Audio API-based audio system with fire ambience loop and sound effects (throw, hit, accumulate, gameOver). Includes mute toggle and volume control based on snow pile height",
+      "category": "feature",
+      "discovered_at": "2026-01-09T22:03:14.156705+00:00"
+    },
+    "app/api/leaderboard/route.ts": {
+      "description": "In-memory leaderboard API with GET (top 10 scores) and POST (score submission with validation). Pre-populated with sample data for development",
+      "category": "api",
+      "discovered_at": "2026-01-09T22:03:14.171849+00:00"
+    }
+  },
+  "last_updated": "2026-01-09T22:03:14.171856+00:00"
+}
