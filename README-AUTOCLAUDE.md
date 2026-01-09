@@ -1,9 +1,80 @@
 # Snowcrastination - Auto-Claude Project Guide
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Architecture](#architecture)
+  - [Tech Stack](#tech-stack)
+  - [Key Files & Directories](#key-files--directories)
+- [Design System: Cyberpunk Winter](#design-system-cyberpunk-winter)
+  - [Centralized Theme Configuration](#centralized-theme-configuration)
+  - [Color Palette](#color-palette)
+  - [CSS Utilities](#css-utilities-in-globalscss)
+- [How to Iterate & Update Styles](#how-to-iterate--update-styles)
+  - [Quick Color Changes](#quick-color-changes)
+  - [Add New Gradient](#add-new-gradient)
+  - [Modify Glow Effect Intensity](#modify-glow-effect-intensity)
+  - [Add CSS Utility Class](#add-css-utility-class)
+- [Game Mechanics](#game-mechanics)
+  - [Core Loop](#core-loop)
+  - [Scoring](#scoring)
+  - [Game State](#game-state)
+- [Audio System](#audio-system)
+  - [Architecture](#architecture-1)
+  - [Sound Effects](#sound-effects)
+  - [Fire Ambience](#fire-ambience)
+  - [Volume Control](#volume-control)
+  - [Adding New Sounds](#adding-new-sounds)
+- [Mobile Controls](#mobile-controls)
+  - [Input Handling](#input-handling)
+  - [Touch Prevention](#touch-prevention)
+  - [Responsive UI](#responsive-ui)
+- [UI Components - Design Notes](#ui-components---design-notes)
+  - [MainMenu](#mainmenu)
+  - [GameHUD (Overlay)](#gamehud-overlay)
+  - [GameOver](#gameover)
+  - [Leaderboard](#leaderboard)
+- [API Endpoints](#api-endpoints)
+- [Development Workflow](#development-workflow)
+  - [Local Testing](#local-testing)
+  - [Make Changes](#make-changes)
+  - [Deploy](#deploy)
+- [Performance Considerations](#performance-considerations)
+- [Testing Patterns](#testing-patterns)
+  - [Local Development Checklist](#local-development-checklist)
+  - [API Endpoint Testing](#api-endpoint-testing)
+  - [Browser Testing Checklist](#browser-testing-checklist)
+  - [Mobile Testing](#mobile-testing)
+  - [Performance Testing](#performance-testing)
+- [Known Patterns](#known-patterns)
+- [Next Steps for Enhancement](#next-steps-for-enhancement)
+- [Deployment Status](#deployment-status)
+- [Tips for Auto-Claude](#tips-for-auto-claude)
+  - [Design & Styling Conventions](#design--styling-conventions)
+  - [Session Context & Build Progress](#session-context--build-progress)
+  - [File Discovery Patterns](#file-discovery-patterns)
+  - [Common Task Workflows](#common-task-workflows)
+  - [Commit Message Conventions](#commit-message-conventions)
+  - [Debugging & Verification](#debugging--verification)
+  - [Best Practices](#best-practices)
+- [Vercel & GitHub Integration](#vercel--github-integration)
+  - [How Deployment Works](#how-deployment-works)
+  - [Vercel Dashboard](#vercel-dashboard)
+  - [Deployment Flow](#deployment-flow)
+  - [GitHub Integration Details](#github-integration-details)
+  - [Environment Variables](#environment-variables)
+  - [GitHub Secrets](#github-secrets-if-needed-for-cicd)
+  - [Monitoring Deployments](#monitoring-deployments)
+  - [Common Issues & Solutions](#common-issues--solutions)
+  - [Useful Vercel Commands](#useful-vercel-commands-if-using-vercel-cli)
+  - [GitHub Actions](#github-actions-optional-future-automation)
+
+---
+
 ## Project Overview
 A cozy snowball defense game with a Cyberpunk Winter aesthetic, AI-generated graphics via Gemini 3 Pro, and a leaderboard system.
 
-**Status**: Deployed to Vercel | **Last Updated**: Cyberpunk Winter UI redesign complete
+**Status**: Deployed to Vercel | **Last Updated**: Documentation enhanced (Audio, Mobile Controls, Testing Patterns, expanded Auto-Claude tips)
 
 ## Architecture
 
@@ -141,6 +212,193 @@ glowCyan: '0 0 30px rgba(6, 182, 212, 0.6), 0 0 60px rgba(6, 182, 212, 0.4)'
 - `GameEngine.getSnowPilePercent()` - Snow accumulation (0-1)
 - `GameEngine.onGameOver()` - Callback when game ends
 
+## Audio System
+
+### Architecture
+**File**: `/lib/audio/AudioManager.ts` - Synthesized audio using Web Audio API
+
+The audio system uses the Web Audio API to generate all sounds programmatically—no external audio files required. This keeps the bundle small and ensures instant playback.
+
+```typescript
+// AudioManager is instantiated by GameEngine
+private audioManager: AudioManager
+
+constructor(canvas, ctx, imageUrls) {
+  // ...
+  this.audioManager = new AudioManager()
+}
+```
+
+### Sound Effects
+Four distinct sound effects are generated using oscillators:
+
+| Effect | Trigger | Sound Design |
+|--------|---------|--------------|
+| `throw` | Player shoots snowball | 400→200 Hz sweep, 0.1s |
+| `hit` | Snowball hits snowflake | 600→300 Hz sweep, 0.15s |
+| `accumulate` | Snowflake hits ground | 200→100 Hz sweep, 0.2s |
+| `gameOver` | Snow reaches 100% | 300→100 Hz sweep, 0.5s |
+
+```typescript
+// Play a sound effect
+this.audioManager.playSoundEffect('hit')
+
+// Available effects
+type SoundEffect = 'throw' | 'hit' | 'accumulate' | 'gameOver'
+```
+
+### Fire Ambience
+Continuous background audio creates cabin atmosphere:
+
+- **Base tone**: 150 Hz sine wave
+- **Modulation**: 5 Hz sine oscillator creates crackling effect
+- **Volume**: Tied to snow pile level—decreases as snow accumulates
+- **Implementation**: Multiple oscillators with frequency modulation
+
+```typescript
+// GameEngine updates fire volume based on danger
+this.audioManager.setFireVolume(1 - this.snowPileHeight / this.maxSnowPileHeight)
+```
+
+### Volume Control
+Audio can be toggled via the HUD mute button:
+
+```typescript
+// In GameCanvas.tsx
+const handleMuteToggle = () => {
+  setIsMuted(!isMuted)
+  if (gameEngineRef.current) {
+    gameEngineRef.current.toggleAudio()
+  }
+}
+
+// In AudioManager.ts
+toggleMute() {
+  this.isMuted = !this.isMuted
+  if (this.fireLoopGain) {
+    this.fireLoopGain.gain.value = this.isMuted ? 0 : this.masterVolume * 0.2
+  }
+}
+```
+
+### Adding New Sounds
+To add a new sound effect:
+
+1. Add case to `playSoundEffect()` in `AudioManager.ts`:
+```typescript
+case 'newSound': {
+  const osc = ctx.createOscillator()
+  osc.frequency.setValueAtTime(500, now)
+  osc.frequency.exponentialRampToValueAtTime(250, now + 0.2)
+  osc.connect(gainNode)
+  gainNode.gain.setValueAtTime(0.1, now)
+  gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2)
+  osc.start(now)
+  osc.stop(now + 0.2)
+  break
+}
+```
+
+2. Update type definition:
+```typescript
+playSoundEffect(type: 'throw' | 'hit' | 'accumulate' | 'gameOver' | 'newSound')
+```
+
+3. Call from GameEngine where appropriate:
+```typescript
+this.audioManager.playSoundEffect('newSound')
+```
+
+## Mobile Controls
+
+### Input Handling
+**File**: `/lib/game/GameEngine.ts` - Uses Pointer Events API for unified input
+
+The game uses the Pointer Events API which provides unified handling for mouse, touch, and pen input:
+
+```typescript
+private setupInput() {
+  const handlePointerDown = (e: PointerEvent) => {
+    if (this.isGameOver) return
+
+    const rect = this.canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    this.shootSnowball(x, y)
+  }
+
+  this.canvas.addEventListener('pointerdown', handlePointerDown)
+}
+```
+
+**Why Pointer Events?**
+- Single event handler for mouse clicks and touch taps
+- Consistent `clientX`/`clientY` coordinates
+- Works across all modern browsers and devices
+- No need for separate `touchstart` handlers
+
+### Touch Prevention
+**File**: `/app/page.tsx` - Prevents unwanted mobile browser behaviors
+
+The app disables default touch behaviors that would interfere with gameplay:
+
+```typescript
+useEffect(() => {
+  // Prevent pinch-to-zoom on multi-touch
+  const preventZoom = (e: Event) => {
+    if ((e as any).touches?.length > 1) {
+      e.preventDefault()
+    }
+  }
+
+  // Prevent scroll wheel zoom
+  const preventDefault = (e: Event) => {
+    e.preventDefault()
+  }
+
+  document.addEventListener('touchmove', preventZoom, { passive: false })
+  document.addEventListener('wheel', preventDefault, { passive: false })
+
+  return () => {
+    document.removeEventListener('touchmove', preventZoom)
+    document.removeEventListener('wheel', preventDefault)
+  }
+}, [])
+```
+
+**File**: `/components/GameCanvas.tsx` - Canvas touch configuration
+
+```tsx
+<canvas
+  ref={canvasRef}
+  className="block w-full h-full touch-none"  // Prevents touch scrolling
+  onContextMenu={(e) => e.preventDefault()}    // Prevents right-click menu
+/>
+```
+
+The `touch-none` Tailwind class applies `touch-action: none` which tells the browser not to handle any touch gestures on the canvas.
+
+### Responsive UI
+HUD elements adapt to mobile screens using Tailwind breakpoints:
+
+```tsx
+// Smaller padding on mobile, larger on desktop
+<div className="p-4 md:p-8">
+
+// Smaller text on mobile
+<div className="text-5xl md:text-6xl">
+
+// Position adjustments
+<div className="bottom-4 md:bottom-8 left-4 md:left-8">
+```
+
+**Mobile Considerations:**
+- All interactive elements use `pointer-events-auto` to remain clickable
+- Buttons have `active:scale-95` for touch feedback
+- Touch targets are sized appropriately (minimum 44x44px)
+- HUD overlays use `pointer-events-none` to not block game canvas
+
 ## UI Components - Design Notes
 
 ### MainMenu
@@ -208,6 +466,81 @@ git push                # Auto-deploys to Vercel
 - **Minimal Re-renders**: Game logic isolated in Canvas
 - **Web Audio**: Synthesized sounds (no external files)
 
+## Testing Patterns
+
+### Local Development Checklist
+
+Before committing changes, run through this checklist:
+
+1. **Build verification**
+   ```bash
+   bun run build    # Catches TypeScript errors and build issues
+   ```
+
+2. **Type checking** (if separate script exists)
+   ```bash
+   bun run type-check
+   ```
+
+3. **Local server testing**
+   ```bash
+   bun run dev      # Test at http://localhost:3000
+   ```
+
+### API Endpoint Testing
+
+Test API routes locally using curl:
+
+```bash
+# Health check
+curl http://localhost:3000/api/health
+
+# Get leaderboard
+curl http://localhost:3000/api/leaderboard
+
+# Submit score (POST)
+curl -X POST http://localhost:3000/api/leaderboard \
+  -H "Content-Type: application/json" \
+  -d '{"playerName": "TestPlayer", "score": 100}'
+
+# Weather endpoint
+curl http://localhost:3000/api/weather
+```
+
+### Browser Testing Checklist
+
+When testing in the browser, verify:
+
+- [ ] **Console**: No JavaScript errors (open DevTools → Console)
+- [ ] **Network**: All requests return 200 OK (DevTools → Network)
+- [ ] **Game Loop**: Snowflakes fall, snowballs fire, collision detection works
+- [ ] **Audio**: Sound effects play (unmuted), fire ambience works
+- [ ] **Responsive**: HUD elements scale properly at different viewport sizes
+
+### Mobile Testing
+
+For mobile/touch testing:
+
+1. Use Chrome DevTools device emulation (Cmd/Ctrl + Shift + M)
+2. Test touch interactions on actual devices when possible
+3. Verify:
+   - [ ] Touch-to-shoot works
+   - [ ] No unwanted zoom/scroll on canvas
+   - [ ] Buttons are tap-friendly (44x44px minimum)
+   - [ ] HUD readable on small screens
+
+### Performance Testing
+
+Basic performance verification:
+
+```bash
+# Check bundle size
+bun run build && ls -lh .next/static/chunks/
+
+# Lighthouse audit (in Chrome DevTools)
+# Target: 90+ Performance score
+```
+
 ## Known Patterns
 
 ### Using Theme in Components
@@ -252,11 +585,143 @@ const getSnowGradient = () => {
 
 ## Tips for Auto-Claude
 
-1. **Always reference `lib/theme.ts`** when making style changes
-2. **Use component exploration** to understand existing patterns
-3. **Test theme changes locally** before pushing
+### Design & Styling Conventions
+
+1. **Always reference `lib/theme.ts`** when making style changes - this is the single source of truth
+2. **Use component exploration** to understand existing patterns before implementing new features
+3. **Test theme changes locally** with `bun run dev` before pushing
 4. **Keep design decisions bold** - Cyberpunk Winter is intentional and distinctive
 5. **Maintain cyan/gold balance** - 70/30 split is critical for cohesion
+
+### Session Context & Build Progress
+
+6. **Use MCP tools for session context** - Record discoveries and gotchas for future sessions:
+   ```bash
+   # Record a discovery
+   mcp__auto-claude__record_discovery(file_path, description, category)
+
+   # Record a gotcha/pitfall to avoid
+   mcp__auto-claude__record_gotcha(gotcha, context)
+
+   # Get context from previous sessions
+   mcp__auto-claude__get_session_context()
+   ```
+
+7. **Track build progress** - Always check and update the implementation plan:
+   ```bash
+   # Check current progress
+   mcp__auto-claude__get_build_progress()
+
+   # Update subtask status after completing work
+   mcp__auto-claude__update_subtask_status(subtask_id, status, notes)
+   ```
+
+8. **Reference the spec files** when starting work:
+   - `.auto-claude/specs/[feature]/spec.md` - High-level requirements
+   - `.auto-claude/specs/[feature]/implementation_plan.json` - Detailed subtasks
+   - `.auto-claude/specs/[feature]/context.json` - Service-specific context
+
+### File Discovery Patterns
+
+9. **Use glob for finding files by pattern**:
+   ```bash
+   # Find all React components
+   Glob("components/**/*.tsx")
+
+   # Find all game-related files
+   Glob("lib/game/**/*.ts")
+
+   # Find test files
+   Glob("**/*.test.ts")
+   ```
+
+10. **Use grep for searching content**:
+    ```bash
+    # Find theme usage across codebase
+    Grep("theme\.", type="tsx")
+
+    # Find API endpoint definitions
+    Grep("export.*GET|POST", path="app/api")
+    ```
+
+11. **Key directories to know**:
+    - `/app` - Next.js pages and API routes
+    - `/components` - React components
+    - `/lib` - Utilities, theme, game engine
+    - `/public` - Static assets (images, fonts)
+    - `.auto-claude/specs/` - Spec and plan files
+
+### Common Task Workflows
+
+12. **For UI changes**:
+    1. Read `lib/theme.ts` for available colors/effects
+    2. Check existing component for similar patterns
+    3. Make changes using theme values
+    4. Test locally: `bun run dev`
+    5. Verify no TypeScript errors: `bun run build`
+
+13. **For game logic changes**:
+    1. Read `lib/game/GameEngine.ts` for game loop
+    2. Check relevant entity files in `lib/game/entities/`
+    3. Make changes, test gameplay locally
+    4. Verify collision/physics in `lib/game/collision.ts`
+
+14. **For API changes**:
+    1. Check existing route in `app/api/`
+    2. Follow same pattern for request/response handling
+    3. Test endpoint locally: `curl http://localhost:3000/api/[route]`
+    4. Handle errors gracefully with try/catch
+
+### Commit Message Conventions
+
+15. **Follow this commit format**:
+    ```
+    auto-claude: [subtask-id] - [brief description]
+    ```
+    Examples:
+    - `auto-claude: subtask-1-2 - Expand Tips for Auto-Claude section`
+    - `auto-claude: subtask-2-1 - Add audio system documentation`
+    - `fix: resolve TypeScript error in GameEngine`
+    - `feat: add touch controls for mobile`
+
+16. **For multi-file changes**, use descriptive body:
+    ```bash
+    git commit -m "$(cat <<'EOF'
+    auto-claude: subtask-X-Y - Feature description
+
+    - Added component A
+    - Updated component B
+    - Fixed issue C
+    EOF
+    )"
+    ```
+
+### Debugging & Verification
+
+17. **Before committing, always verify**:
+    ```bash
+    bun run build          # Check for TypeScript/build errors
+    bun run dev            # Manual testing at localhost:3000
+    git diff               # Review changes before staging
+    ```
+
+18. **If build fails**:
+    1. Read error message carefully
+    2. Check line numbers referenced
+    3. Fix TypeScript errors (type mismatches, missing imports)
+    4. Re-run `bun run build` until clean
+
+19. **Check deployment health after push**:
+    ```bash
+    curl https://snowcrastination.vercel.app/api/health
+    ```
+
+### Best Practices
+
+20. **Preserve existing patterns** - Don't reinvent when existing code shows the way
+21. **Add comments for complex logic** - Especially in game engine code
+22. **Keep commits atomic** - One subtask = one commit when possible
+23. **Update build-progress.txt** - Log what you accomplished each session
 
 ---
 
