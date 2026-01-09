@@ -19,6 +19,16 @@
   - [Core Loop](#core-loop)
   - [Scoring](#scoring)
   - [Game State](#game-state)
+- [Audio System](#audio-system)
+  - [Architecture](#architecture-1)
+  - [Sound Effects](#sound-effects)
+  - [Fire Ambience](#fire-ambience)
+  - [Volume Control](#volume-control)
+  - [Adding New Sounds](#adding-new-sounds)
+- [Mobile Controls](#mobile-controls)
+  - [Input Handling](#input-handling)
+  - [Touch Prevention](#touch-prevention)
+  - [Responsive UI](#responsive-ui)
 - [UI Components - Design Notes](#ui-components---design-notes)
   - [MainMenu](#mainmenu)
   - [GameHUD (Overlay)](#gamehud-overlay)
@@ -195,6 +205,193 @@ glowCyan: '0 0 30px rgba(6, 182, 212, 0.6), 0 0 60px rgba(6, 182, 212, 0.4)'
 - `GameEngine.getScore()` - Current score
 - `GameEngine.getSnowPilePercent()` - Snow accumulation (0-1)
 - `GameEngine.onGameOver()` - Callback when game ends
+
+## Audio System
+
+### Architecture
+**File**: `/lib/audio/AudioManager.ts` - Synthesized audio using Web Audio API
+
+The audio system uses the Web Audio API to generate all sounds programmatically—no external audio files required. This keeps the bundle small and ensures instant playback.
+
+```typescript
+// AudioManager is instantiated by GameEngine
+private audioManager: AudioManager
+
+constructor(canvas, ctx, imageUrls) {
+  // ...
+  this.audioManager = new AudioManager()
+}
+```
+
+### Sound Effects
+Four distinct sound effects are generated using oscillators:
+
+| Effect | Trigger | Sound Design |
+|--------|---------|--------------|
+| `throw` | Player shoots snowball | 400→200 Hz sweep, 0.1s |
+| `hit` | Snowball hits snowflake | 600→300 Hz sweep, 0.15s |
+| `accumulate` | Snowflake hits ground | 200→100 Hz sweep, 0.2s |
+| `gameOver` | Snow reaches 100% | 300→100 Hz sweep, 0.5s |
+
+```typescript
+// Play a sound effect
+this.audioManager.playSoundEffect('hit')
+
+// Available effects
+type SoundEffect = 'throw' | 'hit' | 'accumulate' | 'gameOver'
+```
+
+### Fire Ambience
+Continuous background audio creates cabin atmosphere:
+
+- **Base tone**: 150 Hz sine wave
+- **Modulation**: 5 Hz sine oscillator creates crackling effect
+- **Volume**: Tied to snow pile level—decreases as snow accumulates
+- **Implementation**: Multiple oscillators with frequency modulation
+
+```typescript
+// GameEngine updates fire volume based on danger
+this.audioManager.setFireVolume(1 - this.snowPileHeight / this.maxSnowPileHeight)
+```
+
+### Volume Control
+Audio can be toggled via the HUD mute button:
+
+```typescript
+// In GameCanvas.tsx
+const handleMuteToggle = () => {
+  setIsMuted(!isMuted)
+  if (gameEngineRef.current) {
+    gameEngineRef.current.toggleAudio()
+  }
+}
+
+// In AudioManager.ts
+toggleMute() {
+  this.isMuted = !this.isMuted
+  if (this.fireLoopGain) {
+    this.fireLoopGain.gain.value = this.isMuted ? 0 : this.masterVolume * 0.2
+  }
+}
+```
+
+### Adding New Sounds
+To add a new sound effect:
+
+1. Add case to `playSoundEffect()` in `AudioManager.ts`:
+```typescript
+case 'newSound': {
+  const osc = ctx.createOscillator()
+  osc.frequency.setValueAtTime(500, now)
+  osc.frequency.exponentialRampToValueAtTime(250, now + 0.2)
+  osc.connect(gainNode)
+  gainNode.gain.setValueAtTime(0.1, now)
+  gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2)
+  osc.start(now)
+  osc.stop(now + 0.2)
+  break
+}
+```
+
+2. Update type definition:
+```typescript
+playSoundEffect(type: 'throw' | 'hit' | 'accumulate' | 'gameOver' | 'newSound')
+```
+
+3. Call from GameEngine where appropriate:
+```typescript
+this.audioManager.playSoundEffect('newSound')
+```
+
+## Mobile Controls
+
+### Input Handling
+**File**: `/lib/game/GameEngine.ts` - Uses Pointer Events API for unified input
+
+The game uses the Pointer Events API which provides unified handling for mouse, touch, and pen input:
+
+```typescript
+private setupInput() {
+  const handlePointerDown = (e: PointerEvent) => {
+    if (this.isGameOver) return
+
+    const rect = this.canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    this.shootSnowball(x, y)
+  }
+
+  this.canvas.addEventListener('pointerdown', handlePointerDown)
+}
+```
+
+**Why Pointer Events?**
+- Single event handler for mouse clicks and touch taps
+- Consistent `clientX`/`clientY` coordinates
+- Works across all modern browsers and devices
+- No need for separate `touchstart` handlers
+
+### Touch Prevention
+**File**: `/app/page.tsx` - Prevents unwanted mobile browser behaviors
+
+The app disables default touch behaviors that would interfere with gameplay:
+
+```typescript
+useEffect(() => {
+  // Prevent pinch-to-zoom on multi-touch
+  const preventZoom = (e: Event) => {
+    if ((e as any).touches?.length > 1) {
+      e.preventDefault()
+    }
+  }
+
+  // Prevent scroll wheel zoom
+  const preventDefault = (e: Event) => {
+    e.preventDefault()
+  }
+
+  document.addEventListener('touchmove', preventZoom, { passive: false })
+  document.addEventListener('wheel', preventDefault, { passive: false })
+
+  return () => {
+    document.removeEventListener('touchmove', preventZoom)
+    document.removeEventListener('wheel', preventDefault)
+  }
+}, [])
+```
+
+**File**: `/components/GameCanvas.tsx` - Canvas touch configuration
+
+```tsx
+<canvas
+  ref={canvasRef}
+  className="block w-full h-full touch-none"  // Prevents touch scrolling
+  onContextMenu={(e) => e.preventDefault()}    // Prevents right-click menu
+/>
+```
+
+The `touch-none` Tailwind class applies `touch-action: none` which tells the browser not to handle any touch gestures on the canvas.
+
+### Responsive UI
+HUD elements adapt to mobile screens using Tailwind breakpoints:
+
+```tsx
+// Smaller padding on mobile, larger on desktop
+<div className="p-4 md:p-8">
+
+// Smaller text on mobile
+<div className="text-5xl md:text-6xl">
+
+// Position adjustments
+<div className="bottom-4 md:bottom-8 left-4 md:left-8">
+```
+
+**Mobile Considerations:**
+- All interactive elements use `pointer-events-auto` to remain clickable
+- Buttons have `active:scale-95` for touch feedback
+- Touch targets are sized appropriately (minimum 44x44px)
+- HUD overlays use `pointer-events-none` to not block game canvas
 
 ## UI Components - Design Notes
 
