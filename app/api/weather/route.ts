@@ -34,10 +34,10 @@ export async function GET(request: NextRequest) {
       throw new Error('Failed to fetch weather data')
     }
 
-    const weatherData = await weatherResponse.json()
+    const weatherData = (await weatherResponse.json()) as { weather: Array<{ main: string }> }
 
     // Check for snow in current conditions
-    const isSnowing = weatherData.weather.some((w: any) =>
+    const isSnowing = weatherData.weather.some((w) =>
       ['snow'].includes(w.main.toLowerCase())
     )
 
@@ -50,15 +50,17 @@ export async function GET(request: NextRequest) {
       throw new Error('Failed to fetch forecast data')
     }
 
-    const forecastData = await forecastResponse.json()
+    const forecastData = (await forecastResponse.json()) as {
+      list: Array<{ dt: number; weather: Array<{ main: string }> }>
+    }
 
     // Check for snow in next 24 hours
     const nextDay = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    const snowInForecast = forecastData.list.some((forecast: any) => {
+    const snowInForecast = forecastData.list.some((forecast) => {
       const forecastTime = new Date(forecast.dt * 1000)
       return (
         forecastTime <= nextDay &&
-        forecast.weather.some((w: any) => ['snow'].includes(w.main.toLowerCase()))
+        forecast.weather.some((w) => ['snow'].includes(w.main.toLowerCase()))
       )
     })
 
