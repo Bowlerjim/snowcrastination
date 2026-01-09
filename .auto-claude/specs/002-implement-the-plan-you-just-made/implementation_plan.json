@@ -34,9 +34,9 @@
     "complexity": "simple",
     "estimated_sessions": 1
   },
-  "status": "in_progress",
-  "planStatus": "in_progress",
+  "status": "done",
+  "planStatus": "completed",
   "created_at": "2026-01-09T21:58:25.530Z",
-  "updated_at": "2026-01-09T22:00:00.000Z",
+  "updated_at": "2026-01-09T22:09:00.012Z",
   "last_updated": "2026-01-09T22:03:48.119737+00:00"
 }

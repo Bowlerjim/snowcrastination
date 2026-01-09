@@ -55,9 +55,9 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
         boxShadow: theme.effects.glowDanger 
       }}>
         {/* Game Over Title */}
-        <h1 className="font-display text-5xl md:text-6xl font-black mb-2" style={{ 
+        <h1 className="font-display text-5xl md:text-6xl font-black mb-2" style={{
           color: theme.colors.functional.danger,
-          textShadow: theme.effects.textGlowDanger 
+          textShadow: theme.effects.glowDanger
         }}>Game Over</h1>
         <p className="mono-label text-cyan-300/70 mb-8">You've defended well</p>
 
