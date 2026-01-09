@@ -35,6 +35,8 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
     window.addEventListener('resize', setCanvasSize)
 
     // Load graphics and initialize game engine
+    let animationFrameId: number | undefined
+
     const initializeGame = async () => {
       const imageUrls = await loadGameGraphics()
       const gameEngine = new GameEngine(canvas, ctx, imageUrls)
@@ -49,7 +51,6 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
       gameEngine.onGameOver = handleGameOver
 
       // Game loop
-      let animationFrameId: number
       const gameLoop = () => {
         gameEngine.update()
         gameEngine.render()
@@ -61,20 +62,15 @@ export default function GameCanvas({ onGameOver }: GameCanvasProps) {
       }
 
       animationFrameId = requestAnimationFrame(gameLoop)
-
-      return () => {
-        cancelAnimationFrame(animationFrameId)
-      }
     }
 
-    let cleanup: (() => void) | null = null
-    initializeGame().then(cleanup => {
-      cleanup = cleanup
-    })
+    initializeGame()
 
     return () => {
       window.removeEventListener('resize', setCanvasSize)
-      cleanup?.()
+      if (animationFrameId !== undefined) {
+        cancelAnimationFrame(animationFrameId)
+      }
     }
   }, [])
 
