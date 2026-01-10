@@ -1,0 +1,34 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Read(/Users/jim/snowcrastination/**)",
+      "Write(/Users/jim/snowcrastination/**)",
+      "Edit(/Users/jim/snowcrastination/**)",
+      "Glob(/Users/jim/snowcrastination/**)",
+      "Grep(/Users/jim/snowcrastination/**)",
+      "Read(/Users/jim/snowcrastination/.auto-claude/specs/004-we-gotta-find-a-way-to-make-this-look-like-a-profe/**)",
+      "Write(/Users/jim/snowcrastination/.auto-claude/specs/004-we-gotta-find-a-way-to-make-this-look-like-a-profe/**)",
+      "Edit(/Users/jim/snowcrastination/.auto-claude/specs/004-we-gotta-find-a-way-to-make-this-look-like-a-profe/**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "mcp__context7__resolve-library-id(*)",
+      "mcp__context7__get-library-docs(*)",
+      "mcp__graphiti-memory__search_nodes(*)",
+      "mcp__graphiti-memory__search_facts(*)",
+      "mcp__graphiti-memory__add_episode(*)",
+      "mcp__graphiti-memory__get_episodes(*)",
+      "mcp__graphiti-memory__get_entity_edge(*)"
+    ]
+  }
+}
